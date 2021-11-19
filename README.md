@@ -29,6 +29,12 @@ And the following content in `users.v1.md`, will set up;
 - A GitHub Issue "User Names (Designs / Users)", labelled with "designs", "users" and "v1"
 - A GitHub Task "User Names (Designs / Users)" on Project Board "Designs"
 
+## Install
+
+```shell
+pip install PyGithub==1.55
+```
+
 ## Functionalities
 
 ### Label Synchronization
