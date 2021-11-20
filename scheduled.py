@@ -37,11 +37,12 @@ class SchedulerIndexedDocument:
         # replace special characters in document name and directory name with spaces
         document_name = re.sub(r"[^\w\s]", " ", document_name)
         issue_prefix = f"{document_name.capitalize()}"
+        board_name = os.path.basename(self.directory_path).capitalize()
         labels = self.labels()
         headers = sorted(self._headers())
         for header in headers:
             issue_title = f"{issue_prefix}: {header.capitalize()}"
-            issues.append(ScheduledIssue(None, issue_title, "Nondescript issue", labels))
+            issues.append(ScheduledIssue(None, issue_title, "Nondescript issue", labels, board_name))
         return issues
 
     def milestones(self):
@@ -58,28 +59,20 @@ class SchedulerIndexedDocument:
         boards.append(ScheduledProjectBoard(board_name))
         return boards
 
-    def project_board_tasks(self):
-        tasks = []
-        board_name = os.path.basename(self.directory_path).capitalize()
-        issues = self.issues()
-        for issue in issues:
-            tasks.append(ScheduledProjectBoardTask(board_name, issue.name, issue.content))
-        return tasks
-
 
 class Scheduler:
     def __init__(self, token):
         self.client = Github(token)
         self.documents = []
 
-    def index(self, repo, directory_path):
-        repo = self.client.get_repo(repo)
+    def index(self, repo_path, directory_path):
+        repo = self.client.get_repo(repo_path)
         directory = repo.get_contents(directory_path)
         for file in directory:
             if file.name.endswith(".md"):
                 file_content = file.decoded_content.decode("utf-8")
-                indexed_file = SchedulerIndexedDocument(directory_path, file.name, file_content)
-                self.documents.append(indexed_file)
+                document = SchedulerIndexedDocument(directory_path, file.name, file_content)
+                self.documents.append(document)
 
     def labels(self):
         labels = set()
@@ -104,9 +97,3 @@ class Scheduler:
         for document in self.documents:
             project_boards.update(document.project_boards())
         return project_boards
-
-    def project_board_tasks(self):
-        project_board_tasks = set()
-        for document in self.documents:
-            project_board_tasks.update(document.project_board_tasks())
-        return project_board_tasks

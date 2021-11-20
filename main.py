@@ -1,29 +1,18 @@
 #!/usr/bin/env python
 import os
 
-from scheduler import Scheduler
+from current import Loader
+from scheduled import Scheduler
+from synchronizer import Synchronizer
 
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+GITHUB_REPOSITORY = 'EffortGames/target-dummy'
+scheduler = Scheduler(GITHUB_TOKEN)
+scheduler.index(GITHUB_REPOSITORY, '/project')
 
-indexer = Scheduler(GITHUB_TOKEN)
-indexer.index('EffortGames/GameConcepts', '/designs')
+loader = Loader(GITHUB_TOKEN)
+loader.index(GITHUB_REPOSITORY)
 
-print('\n#### labels:')
-for scheduled_label in indexer.labels():
-    print(scheduled_label)
-
-print('\n#### issues:')
-for scheduled_issue in indexer.issues():
-    print(scheduled_issue)
-
-print('\n#### milestones:')
-for scheduled_milestone in indexer.milestones():
-    print(scheduled_milestone)
-
-print('\n#### project boards:')
-for scheduled_project_board in indexer.project_boards():
-    print(scheduled_project_board)
-
-print('\n#### project board tasks')
-for scheduled_project_board_tasks in indexer.project_board_tasks():
-    print(scheduled_project_board_tasks)
+synchronizer = Synchronizer(GITHUB_TOKEN, loader, scheduler)
+synchronizer.print()
+synchronizer.synchronize(GITHUB_REPOSITORY, dry_run=False)

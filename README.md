@@ -1,14 +1,17 @@
 # Nojira
 
-Makes documentation the source of truth for your project boards.
+Documentation as project management.
+Synchronizes your documents as GitHub Issues, Projects, Cards, Labels & Milestones.
+All you have to do is write documentation and close issues.
 
-Sets up;
+## Functionalities
 
-- GitHub Issues (including Labels)
-- GitHub Project Boards (including Tasks)
-- GitHub Milestones
-
-All you have to do is write documentation and drag tasks to done (or close issues).
+- Documents' paths are synchronized with GitHub Labels, i.e. `'designs/users.v1.md'` will become Labels `designs`, `users` and `v1`.
+- Documents' parent directories are synchronized with GitHub Projects, i.e. `'designs/users.v1.md'` will become a Project `Designs`.
+- Documents' markdown headers (`###`, exclusively) are synchronized with GitHub Issues, i.e. `'designs/users.v1.md'`'s header `#### User Names` becomes Issue `'Users: User Names'`.
+- Documents' GitHub Issues are added as Cards to their respective parent directory's Project.
+- Documents' GitHub Issues receive the labels created by their parent directory.
+- Documents' GitHub Labels are synchronized with GitHub Milestones when they match the pattern `v\d+`.
 
 ## Example
 
@@ -24,71 +27,13 @@ And the following content in `users.v1.md`, will set up;
 
     (...)
 
-- A Project Board "Designs"
+- A Project "Designs"
 - Labels "designs", "users" and "v1"
 - A Milestone "v1"
-- A GitHub Issue "Users: User Names", labelled with "designs", "users" and "v1"
-- A GitHub Task "Users: User Names" on Project Board "Designs"
+- A GitHub Issue and its Card on Project "Designs" named "Users: User Names", labelled with "designs", "users" and "v1"
 
 ## Install
 
 ```shell
 pip install PyGithub==1.55
 ```
-
-## Functionalities
-
-### Label Synchronization
-
-Directories containing documents are scheduled to become GitHub Labels.
-
-- Path segments become "Scheduled Labels", i.e. `'designs/users.v1.md'` will schedule labels `designs`, `users` and `v1`.
-
-Scheduled Labels and Label synchronization is resolved as follows;
-
-- Scheduled Labels are created if they do not exist.
-
-### Issue Synchronization
-
-Directories containing documents are scheduled to become GitHub Issues and Labels.
-
-- File names become part of scheduled issue titles, i.e. `'designs/users.v1.md'` will add a`Users: ` prefix to issues scheduled from the document.
-- Markdown document headers (`###`, exclusively) become "Scheduled Issues", i.e. `### User Names` in the above-mentioned file will schedule an issue with the
-  title `Users: User Names`.
-
-Scheduled Issues and Issues synchronization is resolved as follows;
-
-- Scheduled Issues are created if they do not exist and no other issue exists with the same suffix to match it with.
-- Issues are removed if they do not exist as Scheduled Issues and no other issue exists with the same suffix to match it with.
-- Scheduled Issues and Issues matched with each other have their title and body synchronized to that of the Scheduled Issue.
-
-### Project Board Synchronization
-
-Directories are scheduled to become Project Boards.
-
-- Directory names become "Scheduled Project Boards", i.e. `'designs/'` will schedule a project board `Designs`.
-
-Scheduled Project Boards and Project Boards are synchronized as follows;
-
-- Scheduled Project Boards are created if they do not exist.
-
-### Project Board Task Synchronization
-
-Scheduled Issues become Project Board Tasks.
-
-Scheduled Issues and Project Board Task synchronization is resolved as follows;
-
-- Each action runs against the Scheduled Project Board related to the directory
-- Issues which were created are created as Project Board Tasks
-- Issues which were modified have their respective Project Board Task modified
-- Issues which were closed have their respective Project Board Task removed
-
-### Milestone Synchronization
-
-Scheduled Labels become Scheduled Milestones.
-
-- Any label in the format of `v\d+` becomes a Scheduled Milestone.
-
-Scheduled Milestones and Milestone synchronization is resolved as follows;
-
-- Scheduled Milestones are created if they do not exist.
