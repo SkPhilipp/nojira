@@ -7,7 +7,8 @@ from structures import *
 
 
 class SchedulerIndexedDocument:
-    def __init__(self, directory_path, file_name, content):
+    def __init__(self, repo_path, directory_path, file_name, content):
+        self.repo_path = repo_path
         self.directory_path = directory_path
         self.file_name = file_name
         self.content = content
@@ -41,8 +42,10 @@ class SchedulerIndexedDocument:
         labels = self.labels()
         headers = sorted(self._headers())
         for header in headers:
+            header_link = re.sub(r"[^\w]", "-", header).lower()
             issue_title = f"{issue_prefix}: {header.capitalize()}"
-            issues.append(ScheduledIssue(None, issue_title, "Nondescript issue", labels, board_name))
+            issue_body = f"See [{self.file_name}#{header_link}](https://github.com/{self.repo_path}/blob/master/project/{self.file_name}#{header_link})"
+            issues.append(ScheduledIssue(None, issue_title, issue_body, labels, board_name))
         return issues
 
     def milestones(self):
@@ -71,7 +74,7 @@ class Scheduler:
         for file in directory:
             if file.name.endswith(".md"):
                 file_content = file.decoded_content.decode("utf-8")
-                document = SchedulerIndexedDocument(directory_path, file.name, file_content)
+                document = SchedulerIndexedDocument(repo_path, directory_path, file.name, file_content)
                 self.documents.append(document)
 
     def labels(self):
