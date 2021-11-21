@@ -2,9 +2,18 @@ from random import random
 
 from github import Github
 
+from structures import INDICATOR_LABEL
+
 
 class Synchronizer:
     def __init__(self, token, loader, scheduler):
+        """
+        :param token: GitHub token
+        :param loader: Loader instance
+        :type loader: Loader
+        :param scheduler: Scheduler instance
+        :type scheduler: Scheduler
+        """
         self.client = Github(token)
         # current entries
         self.current_labels = loader.labels()
@@ -81,13 +90,25 @@ class Synchronizer:
                 if column.name == 'Backlog':
                     project_column_by_name[project.name] = column
                     break
+        # re-index milestones
+        milestones_by_name = {}
+        for milestone in repo.get_milestones():
+            milestones_by_name[milestone.title] = milestone
         # issues & project board cards
+        matchable_issues = []
+        for current_issue in self.current_issues:
+            if current_issue not in self.scheduled_issues:
+                if INDICATOR_LABEL.name in current_issue.label_names:
+                    if current_issue.state == "open":
+                        print(f'marking for matching: issue "{current_issue}"')
+                        matchable_issues.append(current_issue)
         for scheduled_issue in self.scheduled_issues:
             if scheduled_issue not in self.current_issues:
                 print(f'creating: issue "{scheduled_issue}"')
                 if not dry_run:
-                    mapped_labels = [labels_by_name[label.name] for label in scheduled_issue.labels]
-                    created_issue = repo.create_issue(title=scheduled_issue.name, body=scheduled_issue.content, labels=mapped_labels)
+                    mapped_labels = [labels_by_name[label] for label in scheduled_issue.label_names]
+                    mapped_milestone = milestones_by_name[scheduled_issue.milestone_name] if scheduled_issue.milestone_name in milestones_by_name else None
+                    created_issue = repo.create_issue(title=scheduled_issue.name, body=scheduled_issue.content, labels=mapped_labels, milestone=mapped_milestone)
                     project_column = project_column_by_name[scheduled_issue.board_name]
                     project_column.create_card(content_id=created_issue.id, content_type='Issue')
             else:

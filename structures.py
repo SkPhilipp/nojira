@@ -12,13 +12,21 @@ class ScheduledLabel:
         return hash(self.name)
 
 
+INDICATOR_LABEL = ScheduledLabel("+⚙️")
+"""
+Label to indicate an issue was created by this program.
+"""
+
+
 class ScheduledIssue:
-    def __init__(self, number, name, content, labels, board_name):
+    def __init__(self, number, name, content, label_names, board_name, milestone_name, state):
         self.number = number
         self.name = name
         self.content = content
-        self.labels = labels
+        self.label_names = label_names
         self.board_name = board_name
+        self.milestone_name = milestone_name
+        self.state = state
 
     def __str__(self):
         return self.name
