@@ -24,7 +24,7 @@ class Synchronizer:
             for item in set_collection:
                 print(f'\t{item}')
 
-    def print(self):
+    def synchronize(self, repo_path, dry_run=False):
         print('\nSCHEDULED ENTRIES:\n')
         Synchronizer._print_set('scheduled labels', self.scheduled_labels)
         Synchronizer._print_set('scheduled milestones', self.scheduled_milestones)
@@ -35,8 +35,6 @@ class Synchronizer:
         Synchronizer._print_set('current milestones', self.current_milestones)
         Synchronizer._print_set('current issues', self.current_issues)
         Synchronizer._print_set('current project boards', self.current_project_boards)
-
-    def synchronize(self, repo_path, dry_run=False):
         print('\nSYNCHRONIZATION:\n')
         repo = self.client.get_repo(repo_path)
         # labels
@@ -75,7 +73,6 @@ class Synchronizer:
         labels_by_name = {}
         for label in repo.get_labels():
             labels_by_name[label.name] = label
-
         # re-index projects
         project_column_by_name = {}
         for project in repo.get_projects():
