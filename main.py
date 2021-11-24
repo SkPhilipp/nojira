@@ -5,16 +5,16 @@ from current import Loader
 from scheduled import Scheduler
 from synchronizer import Synchronizer
 
-GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-GITHUB_REPOSITORY = os.getenv('GITHUB_REPOSITORY', 'EffortGames/GameConcepts')
 
-print('GITHUB_REPOSITORY:', GITHUB_REPOSITORY)
+def nojira(repository_path, directory_path, dry_run):
+    github_token = os.getenv('GITHUB_TOKEN')
+    github_repository = os.getenv('GITHUB_REPOSITORY', repository_path)
+    scheduler = Scheduler(github_token)
+    scheduler.index(github_repository, directory_path)
+    loader = Loader(github_token)
+    loader.index(github_repository)
+    synchronizer = Synchronizer(github_token, loader, scheduler)
+    synchronizer.synchronize(github_repository, dry_run=dry_run)
 
-scheduler = Scheduler(GITHUB_TOKEN)
-scheduler.index(GITHUB_REPOSITORY, '/designs')
 
-loader = Loader(GITHUB_TOKEN)
-loader.index(GITHUB_REPOSITORY)
-
-synchronizer = Synchronizer(GITHUB_TOKEN, loader, scheduler)
-synchronizer.synchronize(GITHUB_REPOSITORY, dry_run=False)
+nojira('EffortGames/GameConcepts', '/designs', dry_run=False)

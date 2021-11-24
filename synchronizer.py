@@ -115,3 +115,12 @@ class Synchronizer:
                     project_column.create_card(content_id=created_issue.id, content_type='Issue')
             else:
                 print(f'exists: issue "{scheduled_issue}"')
+        # issue bodies
+        for current_issue in self.current_issues:
+            for scheduled_issue in self.scheduled_issues:
+                if current_issue.name == scheduled_issue.name:
+                    if current_issue.content != scheduled_issue.content:
+                        print(f'updating: issue "{current_issue.content}" to "{scheduled_issue.content}"')
+                        if not dry_run:
+                            sleep(2)
+                            repo.get_issue(current_issue.number).edit(body=scheduled_issue.content)
