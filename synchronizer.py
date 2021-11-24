@@ -1,4 +1,5 @@
 from random import random
+from time import sleep
 
 from github import Github
 
@@ -16,15 +17,15 @@ class Synchronizer:
         """
         self.client = Github(token)
         # current entries
-        self.current_labels = loader.labels()
-        self.current_milestones = loader.milestones()
-        self.current_issues = loader.issues()
-        self.current_project_boards = loader.project_boards()
+        self.current_labels = sorted(loader.labels())
+        self.current_milestones = sorted(loader.milestones())
+        self.current_issues = sorted(loader.issues())
+        self.current_project_boards = sorted(loader.project_boards())
         # expected entries
-        self.scheduled_labels = scheduler.labels()
-        self.scheduled_milestones = scheduler.milestones()
-        self.scheduled_issues = scheduler.issues()
-        self.scheduled_project_boards = scheduler.project_boards()
+        self.scheduled_labels = sorted(scheduler.labels())
+        self.scheduled_milestones = sorted(scheduler.milestones())
+        self.scheduled_issues = sorted(scheduler.issues())
+        self.scheduled_project_boards = sorted(scheduler.project_boards())
 
     @staticmethod
     def _print_set(set_name, set_collection):
@@ -106,6 +107,7 @@ class Synchronizer:
             if scheduled_issue not in self.current_issues:
                 print(f'creating: issue "{scheduled_issue}"')
                 if not dry_run:
+                    sleep(2)
                     mapped_labels = [labels_by_name[label] for label in scheduled_issue.label_names]
                     mapped_milestone = milestones_by_name[scheduled_issue.milestone_name] if scheduled_issue.milestone_name in milestones_by_name else None
                     created_issue = repo.create_issue(title=scheduled_issue.name, body=scheduled_issue.content, labels=mapped_labels, milestone=mapped_milestone)

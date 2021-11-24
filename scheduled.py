@@ -50,7 +50,7 @@ class SchedulerIndexedDocument:
         for header in headers:
             header_link = re.sub(r"[^\w]", "-", header).lower()
             issue_title = f"{issue_prefix}: {header.capitalize()}"
-            issue_body = f"See [{self.file_name}#{header_link}](https://github.com/{self.repo_path}/blob/master/project/{self.file_name}#{header_link})"
+            issue_body = f"See [{self.file_name}#{header_link}](https://github.com/{self.repo_path}/blob/master{self.directory_path}/{self.file_name}#{header_link})"
             issues.append(ScheduledIssue(None, issue_title, issue_body, label_names, board_name, milestone_name, "open"))
         return issues
 

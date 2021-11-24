@@ -11,6 +11,9 @@ class ScheduledLabel:
     def __hash__(self):
         return hash(self.name)
 
+    def __lt__(self, other):
+        return self.name < other.name
+
 
 INDICATOR_LABEL = ScheduledLabel("+⚙️")
 """
@@ -37,6 +40,9 @@ class ScheduledIssue:
     def __hash__(self):
         return hash(self.name)
 
+    def __lt__(self, other):
+        return self.name < other.name
+
 
 class ScheduledProjectBoard:
     def __init__(self, name):
@@ -51,6 +57,9 @@ class ScheduledProjectBoard:
     def __hash__(self):
         return hash(self.name)
 
+    def __lt__(self, other):
+        return self.name < other.name
+
 
 class ScheduledMilestone:
     def __init__(self, name):
@@ -64,3 +73,6 @@ class ScheduledMilestone:
 
     def __hash__(self):
         return hash(self.name)
+
+    def __lt__(self, other):
+        return self.name < other.name

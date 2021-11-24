@@ -6,12 +6,12 @@ from scheduled import Scheduler
 from synchronizer import Synchronizer
 
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
-GITHUB_REPOSITORY = os.getenv('GITHUB_REPOSITORY', 'EffortGames/target-dummy')
+GITHUB_REPOSITORY = os.getenv('GITHUB_REPOSITORY', 'EffortGames/GameConcepts')
 
 print('GITHUB_REPOSITORY:', GITHUB_REPOSITORY)
 
 scheduler = Scheduler(GITHUB_TOKEN)
-scheduler.index(GITHUB_REPOSITORY, '/project')
+scheduler.index(GITHUB_REPOSITORY, '/designs')
 
 loader = Loader(GITHUB_TOKEN)
 loader.index(GITHUB_REPOSITORY)
