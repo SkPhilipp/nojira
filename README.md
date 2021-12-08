@@ -35,5 +35,5 @@ And the following content in `users.v1.md`, will set up;
 ## Install
 
 ```shell
-pip install PyGithub==1.55
+pip install -r requirements.txt
 ```
